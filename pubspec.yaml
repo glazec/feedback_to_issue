@@ -1,6 +1,6 @@
 name: feedback_to_issue
 description: A new Flutter package project.
-version: 0.0.2
+version: 0.0.3
 author: "glaze<i@inevitable.tech>"
 homepage: https://github.com/glazec
 # description: Direct users' feedback to github issue.
