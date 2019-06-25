@@ -1,13 +1,13 @@
 library feedback_to_issue;
+
 import 'package:flutter/material.dart';
 import 'package:github/server.dart';
+
 /// A Calculator.
 class Calculator {
   /// Returns [value] plus 1.
   int addOne(int value) => value + 1;
 }
-
-
 
 enum IssueTag { bug, enhancement, help_wanted }
 
@@ -18,34 +18,32 @@ class FeedbackDialogue {
   String _githubUsername;
   String _githubRepoName;
 
-  FeedbackDialogue(
-    BuildContext context,
-    GlobalKey<ScaffoldState> scaffoldKey,
-    String githubSecret,
-    String githubUsername,
-    String githubRepoName
-    ) {
+  FeedbackDialogue(BuildContext context, GlobalKey<ScaffoldState> scaffoldKey,
+      String githubSecret, String githubUsername, String githubRepoName) {
     // this._context = context;
     this._scaffoldKey = scaffoldKey;
     this._githubSecret = githubSecret;
-    this._githubSecret =  githubSecret;
-    this._githubUsername= githubUsername;
-    this._githubUsername= githubRepoName;
+    this._githubSecret = githubSecret;
+    this._githubUsername = githubUsername;
+    this._githubUsername = githubRepoName;
     showDialog(
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return IssueForm(scaffoldKey, _showSnackBar, _changeSubmitToSuccess,githubRepoName,githubSecret,githubUsername);
+          return IssueForm(scaffoldKey, _showSnackBar, _changeSubmitToSuccess,
+              githubRepoName, githubSecret, githubUsername,_changeSubmitToError);
         });
   }
 
   _showSnackBar() {
     try {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        duration: Duration(days: 1),
-        content: new Row(
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          duration: Duration(days: 1),
+          content: new Row(
             children: <Widget>[
-              SizedBox(width:20,height:20,child: CircularProgressIndicator()),
+              SizedBox(
+                  width: 20, height: 20, child: CircularProgressIndicator()),
               new SizedBox(
                 width: 10,
               ),
@@ -60,15 +58,28 @@ class FeedbackDialogue {
   }
 
   _changeSubmitToSuccess() {
-      try {
+    try {
       _scaffoldKey.currentState.removeCurrentSnackBar();
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        // duration: Duration(days: 1),
-        content: 
-          new Row(
-            children: <Widget>[
-              new Text("Success")
-            ],
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          // duration: Duration(days: 1),
+          content: new Row(
+            children: <Widget>[new Text("Success")],
+          ),
+        ),
+      );
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+    _changeSubmitToError() {
+    try {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          // duration: Duration(days: 1),
+          content: new Row(
+            children: <Widget>[new Text("An Error has occured",style:new TextStyle(color: Colors.red))],
           ),
         ),
       );
@@ -79,13 +90,15 @@ class FeedbackDialogue {
 }
 
 class IssueForm extends StatefulWidget {
-  IssueForm(this._scaffoldKey, this.showSnackBar, this.changeSubmitToSuccess,this._githubRepoName,this._githubSecret,this._githubUsername);
+  IssueForm(this._scaffoldKey, this.showSnackBar, this.changeSubmitToSuccess,
+      this._githubRepoName, this._githubSecret, this._githubUsername,this.changeSubmitToError);
   final VoidCallback showSnackBar;
   final GlobalKey<ScaffoldState> _scaffoldKey;
   final String _githubUsername;
   final String _githubSecret;
   final String _githubRepoName;
   final VoidCallback changeSubmitToSuccess;
+  final VoidCallback changeSubmitToError;
   @override
   State<StatefulWidget> createState() => new _IssueFormState();
 }
@@ -112,8 +125,7 @@ class _IssueFormState extends State<IssueForm> {
     widget.showSnackBar();
     print('create issue');
     var github = createGitHubClient(
-        auth: new Authentication.withToken(
-            widget._githubSecret));
+        auth: new Authentication.withToken(widget._githubSecret));
     IssueRequest issueRequest = new IssueRequest();
     issueRequest.title = _title;
     issueRequest.body = _email == '' ? _content : _email + '\n' + _content;
@@ -122,10 +134,16 @@ class _IssueFormState extends State<IssueForm> {
     issueRequest.labels = [
       _issueTag.toString().split('.')[1].split('_').join(' ')
     ];
-    var response = await github.issues
-        .create(new RepositorySlug(widget._githubUsername, widget._githubRepoName), issueRequest);
-    print('issue ' + response.toString());
+    try {
+      var response = await github.issues.create(
+          new RepositorySlug(widget._githubUsername, widget._githubRepoName),
+          issueRequest);
+      debugPrint('issue ' + response.toString());
     widget.changeSubmitToSuccess();
+    } catch (e) {
+      debugPrint(e.message);
+      widget.changeSubmitToError();
+    }
   }
 
   @override
