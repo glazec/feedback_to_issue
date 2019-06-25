@@ -2,7 +2,7 @@ name: feedback_to_issue
 version: 0.0.3
 author: "glaze<i@inevitable.tech>"
 homepage: https://github.com/glazec
-description: "A UI to direct users' feedback to github issue. Developers can have a nice feedback dialogue for their apps. The dialogue has label,email and content field, which will pass feedback to github issue with corresponding label."
+description: "A UI to direct users' feedback to github issue. The feedback dialogue will pass feedback to github issue with corresponding label."
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
