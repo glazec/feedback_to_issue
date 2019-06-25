@@ -39,37 +39,39 @@ class FeedbackDialogue {
         });
   }
 
-  _changeSubmitToSuccess() {
+  _showSnackBar() {
     try {
-      _scaffoldKey.currentState.removeCurrentSnackBar();
-      _scaffoldKey.currentState.showSnackBar(
-        SnackBar(content: new Text('Success')),
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        duration: Duration(days: 1),
+        content: new Row(
+            children: <Widget>[
+              SizedBox(width:20,height:20,child: CircularProgressIndicator()),
+              new SizedBox(
+                width: 10,
+              ),
+              new Text("Submitting")
+            ],
+          ),
+        ),
       );
     } catch (e) {
       debugPrint(e.toString());
     }
   }
 
-  _showSnackBar() {
-    try {
+  _changeSubmitToSuccess() {
+      try {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
       _scaffoldKey.currentState.showSnackBar(SnackBar(
-        duration: Duration(days: 1),
-        content: new Container(
-          height: 120,
-          child: new Column(
+        // duration: Duration(days: 1),
+        content: 
+          new Row(
             children: <Widget>[
-              new SizedBox(
-                height: 20,
-              ),
-              CircularProgressIndicator(),
-              new SizedBox(
-                height: 40,
-              ),
-              new Text("Submitting")
+              new Text("Success")
             ],
           ),
         ),
-      ));
+      );
     } catch (e) {
       debugPrint(e.toString());
     }
