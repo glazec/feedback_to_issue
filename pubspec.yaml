@@ -1,7 +1,7 @@
 name: feedback_to_issue
-version: 0.0.3
+version: 0.0.4
 author: "glaze<i@inevitable.tech>"
-homepage: https://github.com/glazec
+homepage: https://github.com/glazec/feedback_to_issue
 description: "A UI to direct users' feedback to github issue. The feedback dialogue will pass feedback to github issue with corresponding label."
 
 environment:
