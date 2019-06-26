@@ -93,7 +93,7 @@ class FeedbackDialogue {
       _scaffoldKey.currentState.removeCurrentSnackBar();
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
-          duration: Duration(seconds: 15),
+          duration: Duration(seconds: 10),
           content: new Row(
             children: <Widget>[
               new Text("An Error has occured",
