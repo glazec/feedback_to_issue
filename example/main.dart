@@ -17,24 +17,33 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-    final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // we need scaffoldkey to share scaffold state with other widget.
-      key:_scaffoldKey,
-      body: Center(child: OutlineButton(
-        child: new Text('Feedback'),
-        onPressed: (){new FeedbackDialogue(context,_scaffoldKey,'your_github_api_token','your_github_username','your_github_repository_name');},
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    )
-    );
-}}
+        // we need scaffoldkey to share scaffold state with other widget.
+        key: _scaffoldKey,
+        body: Center(
+          child: OutlineButton(
+            child: new Text('Feedback'),
+            onPressed: () {
+              //assignee is default to your_github_username
+              var feedbackDialogue = new FeedbackDialogue(
+                  context,
+                  _scaffoldKey,
+                  'your_github_api_token',
+                  'your_github_username',
+                  'your_github_repository_name',
+                  assignee: 'assignee_user_name');
+              feedbackDialogue.prompt();
+            },
+          ),
+        ));
+  }
+}
