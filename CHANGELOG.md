@@ -1,3 +1,6 @@
+## 0.0.4
+### Feature
+* add api prompt()
 ## 0.0.3
 ### Feature
 * Redesign the snackbar ui.
