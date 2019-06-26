@@ -52,6 +52,7 @@ class FeedbackDialogue {
 
   _showSnackBar() {
     try {
+      _scaffoldKey.currentState.removeCurrentSnackBar();
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           duration: Duration(days: 1),
