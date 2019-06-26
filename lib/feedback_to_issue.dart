@@ -28,7 +28,9 @@ class FeedbackDialogue {
     this._githubSecret = githubSecret;
     this._githubUsername = githubUsername;
     this._githubRepoName = githubRepoName;
-    assignee == null ? this._assignee = githubUsername : this._assignee = assignee;
+    assignee == null
+        ? this._assignee = githubUsername
+        : this._assignee = assignee;
   }
 // Call prompt to shwo the feedback dialogue
   prompt() {
