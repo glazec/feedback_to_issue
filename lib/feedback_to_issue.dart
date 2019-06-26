@@ -12,26 +12,40 @@ class Calculator {
 enum IssueTag { bug, enhancement, help_wanted }
 
 class FeedbackDialogue {
-  BuildContext _context;
+  // BuildContext _context;
   GlobalKey<ScaffoldState> _scaffoldKey;
   String _githubSecret;
   String _githubUsername;
   String _githubRepoName;
+  BuildContext _context;
+  String _assignee;
 
   FeedbackDialogue(BuildContext context, GlobalKey<ScaffoldState> scaffoldKey,
-      String githubSecret, String githubUsername, String githubRepoName) {
-    // this._context = context;
+      String githubSecret, String githubUsername, String githubRepoName,
+      {String assignee}) {
+    this._context = context;
     this._scaffoldKey = scaffoldKey;
     this._githubSecret = githubSecret;
     this._githubSecret = githubSecret;
     this._githubUsername = githubUsername;
     this._githubUsername = githubRepoName;
+    assignee == null ? this._assignee = assignee : this._assignee = assignee;
+  }
+// Call prompt to shwo the feedback dialogue
+  prompt() {
     showDialog(
-        context: context,
+        context: _context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return IssueForm(scaffoldKey, _showSnackBar, _changeSubmitToSuccess,
-              githubRepoName, githubSecret, githubUsername,_changeSubmitToError);
+          return IssueForm(
+              _scaffoldKey,
+              _showSnackBar,
+              _changeSubmitToSuccess,
+              _githubRepoName,
+              _githubSecret,
+              _githubUsername,
+              _changeSubmitToError,
+              _assignee);
         });
   }
 
@@ -72,14 +86,18 @@ class FeedbackDialogue {
       debugPrint(e.toString());
     }
   }
-    _changeSubmitToError() {
+
+  _changeSubmitToError() {
     try {
       _scaffoldKey.currentState.removeCurrentSnackBar();
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           // duration: Duration(days: 1),
           content: new Row(
-            children: <Widget>[new Text("An Error has occured",style:new TextStyle(color: Colors.red))],
+            children: <Widget>[
+              new Text("An Error has occured",
+                  style: new TextStyle(color: Colors.red))
+            ],
           ),
         ),
       );
@@ -90,8 +108,16 @@ class FeedbackDialogue {
 }
 
 class IssueForm extends StatefulWidget {
-  IssueForm(this._scaffoldKey, this.showSnackBar, this.changeSubmitToSuccess,
-      this._githubRepoName, this._githubSecret, this._githubUsername,this.changeSubmitToError);
+  IssueForm(
+      this._scaffoldKey,
+      this.showSnackBar,
+      this.changeSubmitToSuccess,
+      this._githubRepoName,
+      this._githubSecret,
+      this._githubUsername,
+      this.changeSubmitToError,
+      this._assignee);
+  final String _assignee;
   final VoidCallback showSnackBar;
   final GlobalKey<ScaffoldState> _scaffoldKey;
   final String _githubUsername;
@@ -129,7 +155,7 @@ class _IssueFormState extends State<IssueForm> {
     IssueRequest issueRequest = new IssueRequest();
     issueRequest.title = _title;
     issueRequest.body = _email == '' ? _content : _email + '\n' + _content;
-    issueRequest.assignee = widget._githubUsername;
+    issueRequest.assignee = widget._assignee;
     // issueRequest.milestone=1;
     issueRequest.labels = [
       _issueTag.toString().split('.')[1].split('_').join(' ')
@@ -139,7 +165,7 @@ class _IssueFormState extends State<IssueForm> {
           new RepositorySlug(widget._githubUsername, widget._githubRepoName),
           issueRequest);
       debugPrint('issue ' + response.toString());
-    widget.changeSubmitToSuccess();
+      widget.changeSubmitToSuccess();
     } catch (e) {
       debugPrint(e.message);
       widget.changeSubmitToError();
