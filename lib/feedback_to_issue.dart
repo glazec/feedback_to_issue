@@ -26,10 +26,9 @@ class FeedbackDialogue {
     this._context = context;
     this._scaffoldKey = scaffoldKey;
     this._githubSecret = githubSecret;
-    this._githubSecret = githubSecret;
     this._githubUsername = githubUsername;
-    this._githubUsername = githubRepoName;
-    assignee == null ? this._assignee = assignee : this._assignee = assignee;
+    this._githubRepoName = githubRepoName;
+    assignee == null ? this._assignee = githubUsername : this._assignee = assignee;
   }
 // Call prompt to shwo the feedback dialogue
   prompt() {
@@ -92,11 +91,11 @@ class FeedbackDialogue {
       _scaffoldKey.currentState.removeCurrentSnackBar();
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
-          // duration: Duration(days: 1),
+          duration: Duration(seconds: 15),
           content: new Row(
             children: <Widget>[
               new Text("An Error has occured",
-                  style: new TextStyle(color: Colors.red))
+                  style: new TextStyle(color: Colors.redAccent))
             ],
           ),
         ),
