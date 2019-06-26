@@ -1,3 +1,7 @@
+## 0.0.6
+### Bug
+* Fix success fading time.
+* Fix snackbar overlapping.
 ## 0.0.5
 ### Bug
 * Fix feedbackdialogue constructor.
