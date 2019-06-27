@@ -9,7 +9,6 @@ class Calculator {
   int addOne(int value) => value + 1;
 }
 
-enum IssueTag { bug, enhancement, help_wanted }
 
 class FeedbackDialogue {
   // BuildContext _context;
@@ -19,10 +18,11 @@ class FeedbackDialogue {
   String _githubRepoName;
   BuildContext _context;
   String _assignee;
+  List<Tag> _feedbackTags;
 
   FeedbackDialogue(BuildContext context, GlobalKey<ScaffoldState> scaffoldKey,
       String githubSecret, String githubUsername, String githubRepoName,
-      {String assignee}) {
+      {String assignee,List<Tag> feedbackTags}) {
     this._context = context;
     this._scaffoldKey = scaffoldKey;
     this._githubSecret = githubSecret;
@@ -31,6 +31,9 @@ class FeedbackDialogue {
     assignee == null
         ? this._assignee = githubUsername
         : this._assignee = assignee;
+    feedbackTags==null
+        ? this._feedbackTags= [Tag(Colors.red, 'Something isn\'t working.','Bug','bug'),Tag(Colors.blue,'New feature or request.','Enhencement','enhencement'),Tag(Colors.purple,'Any questions related to the app','Other','question')]
+        : this._feedbackTags = feedbackTags;
   }
 // Call prompt to shwo the feedback dialogue
   prompt() {
@@ -46,7 +49,9 @@ class FeedbackDialogue {
               _githubSecret,
               _githubUsername,
               _changeSubmitToError,
-              _assignee);
+              _assignee,
+              _feedbackTags
+              );
         });
   }
 
@@ -118,7 +123,9 @@ class IssueForm extends StatefulWidget {
       this._githubSecret,
       this._githubUsername,
       this.changeSubmitToError,
-      this._assignee);
+      this._assignee,
+      this._feedbackTags
+      );
   final String _assignee;
   final VoidCallback showSnackBar;
   final GlobalKey<ScaffoldState> _scaffoldKey;
@@ -127,6 +134,7 @@ class IssueForm extends StatefulWidget {
   final String _githubRepoName;
   final VoidCallback changeSubmitToSuccess;
   final VoidCallback changeSubmitToError;
+  final List<Tag> _feedbackTags;
   @override
   State<StatefulWidget> createState() => new _IssueFormState();
 }
@@ -135,13 +143,13 @@ class _IssueFormState extends State<IssueForm> {
   final formKey = new GlobalKey<FormState>();
   String _title = '';
   String _email = '';
-  IssueTag _issueTag = IssueTag.help_wanted;
+  String _issueTag = '';
   String _content = '';
   int spaceBetweenElements = 1;
 
   bool validateAndSave() {
     final form = formKey.currentState;
-    if (form.validate()) {
+    if (form.validate() && _issueTag != '') {
       form.save();
       return true;
     }
@@ -160,7 +168,8 @@ class _IssueFormState extends State<IssueForm> {
     issueRequest.assignee = widget._assignee;
     // issueRequest.milestone=1;
     issueRequest.labels = [
-      _issueTag.toString().split('.')[1].split('_').join(' ')
+      // _issueTag.toString().split('.')[1].split('_').join(' ')
+      _issueTag
     ];
     try {
       var response = await github.issues.create(
@@ -192,7 +201,8 @@ class _IssueFormState extends State<IssueForm> {
                 Spacer(
                   flex: spaceBetweenElements,
                 ),
-                tagBuilder(),
+                // tagBuilder(),
+                makeTags(widget._feedbackTags),
                 Spacer(
                   flex: spaceBetweenElements,
                 ),
@@ -269,64 +279,51 @@ class _IssueFormState extends State<IssueForm> {
         ]);
   }
 
-  Widget tagBuilder() {
+// generating widgets for tags through user input
+  Widget makeTags(List<Tag> rawTag) {
+    List<Widget> tags = new List();
+    rawTag.forEach((element) {
+      tags.add(makeTag(element));
+      tags.add(SizedBox(
+        width: 10,
+      ));
+    });
     return Container(
       height: 44.0,
       child: new ListView(
         scrollDirection: Axis.horizontal,
-        children: <Widget>[
-          new Tooltip(
-            message: 'Something isn\'t working.',
-            child: FilterChip(
-              // backgroundColor: Colors.transparent,
-              // shape: StadiumBorder(side: BorderSide(color: Colors.greenAccent)),
-              backgroundColor: Colors.red[100],
-              selectedColor: Colors.red[400],
-              selected: _issueTag == IssueTag.bug,
-              label: Text("Bug"),
-              onSelected: (bool value) {
-                setState(() {
-                  _issueTag = IssueTag.bug;
-                });
-              },
-            ),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          new Tooltip(
-            message: 'New feature or request.',
-            child: FilterChip(
-              backgroundColor: Colors.blue[100],
-              selectedColor: Colors.blue[400],
-              selected: _issueTag == IssueTag.enhancement,
-              label: Text("Enhencement"),
-              onSelected: (bool value) {
-                setState(() {
-                  _issueTag = IssueTag.enhancement;
-                });
-              },
-            ),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          new Tooltip(
-            message: 'Any question relating to the app.',
-            child: FilterChip(
-              backgroundColor: Colors.green[100],
-              selectedColor: Colors.green[400],
-              selected: _issueTag == IssueTag.help_wanted,
-              label: Text("Other"),
-              onSelected: (bool value) {
-                setState(() {
-                  _issueTag = IssueTag.help_wanted;
-                });
-              },
-            ),
-          ),
-        ],
-      ),
-    );
+        children:tags ));
   }
+
+//Generate widget for one Tag
+  Widget makeTag(Tag rawTag) {
+    return (new Tooltip(
+      message: rawTag.tip,
+      child: FilterChip(
+        // backgroundColor: Colors.transparent,
+        // shape: StadiumBorder(side: BorderSide(color: Colors.greenAccent)),
+        backgroundColor: rawTag.color[100],
+        selectedColor: rawTag.color[400],
+        selected: _issueTag == rawTag.value,
+        label: Text(rawTag.label),
+        onSelected: (bool value) {
+          setState(() {
+            _issueTag = rawTag.value;
+          });
+        },
+      ),
+    ));
+  }
+
+ 
+}
+
+class Tag {
+  final MaterialColor color; // The main color of the tag.Eg: Colors.green
+  final String
+      tip; // The tips of the tag. When user pressing it for a long time, it will appear.
+  final String label; //The lable of the tag,which appear on the tag.
+  final String
+      value; //The value of the tag will be the lable of the github issue.
+  Tag(this.color, this.tip, this.label, this.value);
 }
