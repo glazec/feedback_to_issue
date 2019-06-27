@@ -1,4 +1,7 @@
-## 0.0.6
+## 0.0.7
+### Feature
+* Add tooltip.
+* Add customize tag.
 ### Bug
 * Fix success fading time.
 * Fix snackbar overlapping.
