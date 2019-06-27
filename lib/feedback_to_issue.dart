@@ -275,46 +275,55 @@ class _IssueFormState extends State<IssueForm> {
       child: new ListView(
         scrollDirection: Axis.horizontal,
         children: <Widget>[
-          FilterChip(
-            // backgroundColor: Colors.transparent,
-            // shape: StadiumBorder(side: BorderSide(color: Colors.greenAccent)),
-            backgroundColor: Colors.red[100],
-            selectedColor: Colors.red[400],
-            selected: _issueTag == IssueTag.bug,
-            label: Text("Bug"),
-            onSelected: (bool value) {
-              setState(() {
-                _issueTag = IssueTag.bug;
-              });
-            },
+          new Tooltip(
+            message: 'Something isn\'t working.',
+            child: FilterChip(
+              // backgroundColor: Colors.transparent,
+              // shape: StadiumBorder(side: BorderSide(color: Colors.greenAccent)),
+              backgroundColor: Colors.red[100],
+              selectedColor: Colors.red[400],
+              selected: _issueTag == IssueTag.bug,
+              label: Text("Bug"),
+              onSelected: (bool value) {
+                setState(() {
+                  _issueTag = IssueTag.bug;
+                });
+              },
+            ),
           ),
           SizedBox(
             width: 10,
           ),
-          FilterChip(
-            backgroundColor: Colors.blue[100],
-            selectedColor: Colors.blue[400],
-            selected: _issueTag == IssueTag.enhancement,
-            label: Text("Enhencement"),
-            onSelected: (bool value) {
-              setState(() {
-                _issueTag = IssueTag.enhancement;
-              });
-            },
+          new Tooltip(
+            message: 'New feature or request.',
+            child: FilterChip(
+              backgroundColor: Colors.blue[100],
+              selectedColor: Colors.blue[400],
+              selected: _issueTag == IssueTag.enhancement,
+              label: Text("Enhencement"),
+              onSelected: (bool value) {
+                setState(() {
+                  _issueTag = IssueTag.enhancement;
+                });
+              },
+            ),
           ),
           SizedBox(
             width: 10,
           ),
-          FilterChip(
-            backgroundColor: Colors.green[100],
-            selectedColor: Colors.green[400],
-            selected: _issueTag == IssueTag.help_wanted,
-            label: Text("Help wanted"),
-            onSelected: (bool value) {
-              setState(() {
-                _issueTag = IssueTag.help_wanted;
-              });
-            },
+          new Tooltip(
+            message: 'Any question relating to the app.',
+            child: FilterChip(
+              backgroundColor: Colors.green[100],
+              selectedColor: Colors.green[400],
+              selected: _issueTag == IssueTag.help_wanted,
+              label: Text("Other"),
+              onSelected: (bool value) {
+                setState(() {
+                  _issueTag = IssueTag.help_wanted;
+                });
+              },
+            ),
           ),
         ],
       ),
